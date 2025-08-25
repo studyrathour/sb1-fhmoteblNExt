@@ -8,10 +8,10 @@ import {
   onSnapshot,
   query,
   orderBy,
-  where
+  FirestoreError,
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { Batch, LiveClass, Content, Subject, Section } from '../types';
+import { Batch } from '../types';
 
 export const firebaseService = {
   // Batches
@@ -63,79 +63,24 @@ export const firebaseService = {
     }
   },
 
-  // Live Classes
-  async addLiveClass(liveClass: Omit<LiveClass, 'id'>) {
-    try {
-      const docRef = await addDoc(collection(db, 'liveClasses'), {
-        ...liveClass,
-        isLive: false
-      });
-      return docRef.id;
-    } catch (error) {
-      console.error('Error adding live class:', error);
-      throw error;
-    }
-  },
-
-  async getLiveClasses() {
-    try {
-      const querySnapshot = await getDocs(
-        query(collection(db, 'liveClasses'), orderBy('scheduledTime', 'asc'))
-      );
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        scheduledTime: doc.data().scheduledTime?.toDate()
-      })) as LiveClass[];
-    } catch (error) {
-      console.error('Error getting live classes:', error);
-      throw error;
-    }
-  },
-
-  async updateLiveClass(id: string, updates: Partial<LiveClass>) {
-    try {
-      await updateDoc(doc(db, 'liveClasses', id), updates);
-    } catch (error) {
-      console.error('Error updating live class:', error);
-      throw error;
-    }
-  },
-
-  async deleteLiveClass(id: string) {
-    try {
-      await deleteDoc(doc(db, 'liveClasses', id));
-    } catch (error) {
-      console.error('Error deleting live class:', error);
-      throw error;
-    }
-  },
-
   // Real-time listeners
-  onBatchesChange(callback: (batches: Batch[]) => void) {
-    return onSnapshot(
-      query(collection(db, 'batches'), orderBy('createdAt', 'desc')),
+  onBatchesChange(
+    onNext: (batches: Batch[]) => void,
+    onError?: (error: FirestoreError) => void
+  ) {
+    const q = query(collection(db, 'batches'), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, 
       (snapshot) => {
         const batches = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         })) as Batch[];
-        callback(batches);
+        onNext(batches);
+      },
+      (error) => {
+        console.error("Firestore (onBatchesChange): ", error);
+        if (onError) onError(error);
       }
     );
   },
-
-  onLiveClassesChange(callback: (liveClasses: LiveClass[]) => void) {
-    return onSnapshot(
-      query(collection(db, 'liveClasses'), orderBy('scheduledTime', 'asc')),
-      (snapshot) => {
-        const liveClasses = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          scheduledTime: doc.data().scheduledTime?.toDate()
-        })) as LiveClass[];
-        callback(liveClasses);
-      }
-    );
-  }
 };

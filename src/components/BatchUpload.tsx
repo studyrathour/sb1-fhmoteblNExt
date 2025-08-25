@@ -81,8 +81,8 @@ const BatchUpload: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+    <div className="bg-surface rounded-lg shadow-md p-6 border border-secondary">
+      <h2 className="text-xl font-semibold text-text-primary mb-6 flex items-center gap-2">
         <Upload className="w-5 h-5" />
         Batch Upload
       </h2>
@@ -90,10 +90,10 @@ const BatchUpload: React.FC = () => {
       <div className="space-y-6">
         {/* Folder Upload */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             Upload Batch Folder
           </label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+          <div className="border-2 border-dashed border-secondary rounded-lg p-6 text-center hover:border-primary transition-colors">
             <input
               ref={folderInputRef}
               type="file"
@@ -104,11 +104,11 @@ const BatchUpload: React.FC = () => {
               id="folderUpload"
             />
             <label htmlFor="folderUpload" className="cursor-pointer">
-              <FolderOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg font-medium text-gray-600 mb-2">
+              <FolderOpen className="w-12 h-12 text-text-tertiary mx-auto mb-4" />
+              <p className="text-lg font-medium text-text-secondary mb-2">
                 Select Batch Folder
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-text-tertiary">
                 Choose a folder containing subjects with XLSX files
               </p>
             </label>
@@ -117,16 +117,16 @@ const BatchUpload: React.FC = () => {
 
         {/* Preview Section */}
         {showPreview && previewData && (
-          <div className="border rounded-lg p-4">
+          <div className="border border-secondary rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-800 flex items-center gap-2">
+              <h3 className="text-lg font-medium text-text-primary flex items-center gap-2">
                 <Eye className="w-5 h-5" />
                 Preview Structure
               </h3>
               <button
                 onClick={handleUploadToFirebase}
                 disabled={isUploading}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 disabled:opacity-50 flex items-center gap-2"
               >
                 {isUploading ? (
                   <>
@@ -144,26 +144,26 @@ const BatchUpload: React.FC = () => {
 
             <div className="space-y-4">
               {Object.keys(previewData).map((batchName) => (
-                <div key={batchName} className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-800 mb-3">
+                <div key={batchName} className="bg-background rounded-lg p-4">
+                  <h4 className="font-medium text-text-primary mb-3">
                     📚 Batch: {batchName}
                   </h4>
                   <div className="space-y-2">
                     {Object.keys(previewData[batchName].subjects).map((subjectName) => (
-                      <div key={subjectName} className="bg-white rounded p-3">
-                        <h5 className="font-medium text-gray-700 mb-2">
+                      <div key={subjectName} className="bg-surface rounded p-3">
+                        <h5 className="font-medium text-text-secondary mb-2">
                           📖 Subject: {subjectName}
                         </h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                           {Object.keys(previewData[batchName].subjects[subjectName].sections).map((sectionName) => {
                             const section = previewData[batchName].subjects[subjectName].sections[sectionName];
                             return (
-                              <div key={sectionName} className="bg-gray-50 rounded p-2">
+                              <div key={sectionName} className="bg-background rounded p-2">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                                  <FileSpreadsheet className="w-4 h-4 text-green-400" />
                                   <span className="text-sm font-medium">{sectionName}</span>
                                 </div>
-                                <p className="text-xs text-gray-600">
+                                <p className="text-xs text-text-tertiary">
                                   {section.contents?.length || 0} items
                                 </p>
                               </div>

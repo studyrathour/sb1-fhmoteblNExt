@@ -18,7 +18,7 @@ export interface Subject {
 
 export interface Section {
   id: string;
-  name: string;
+  name:string;
   type: 'video' | 'notes' | 'assignment' | 'quiz';
   contents: Content[];
 }
@@ -31,18 +31,6 @@ export interface Content {
   thumbnail?: string;
   duration?: string;
   description?: string;
-}
-
-export interface LiveClass {
-  id: string;
-  title: string;
-  description: string;
-  scheduledTime: Date;
-  videoUrl?: string;
-  isLive: boolean;
-  thumbnail: string;
-  batchId: string;
-  subjectId: string;
 }
 
 export interface Quiz {
@@ -62,35 +50,10 @@ export interface Question {
 }
 
 export interface Assignment {
-  id: string;
+  id:string;
   title: string;
   description: string;
   dueDate: Date;
   maxMarks: number;
   attachments: string[];
-}
-
-export interface StudentProgress {
-  studentId: string;
-  batchId: string;
-  completedContent: string[];
-  quizResults: QuizResult[];
-  assignmentSubmissions: AssignmentSubmission[];
-  overallProgress: number;
-}
-
-export interface QuizResult {
-  quizId: string;
-  score: number;
-  totalMarks: number;
-  submittedAt: Date;
-  answers: number[];
-}
-
-export interface AssignmentSubmission {
-  assignmentId: string;
-  submittedAt: Date;
-  attachments: string[];
-  marks?: number;
-  feedback?: string;
 }
