@@ -1,0 +1,20 @@
+# This configuration file tells Netlify how to build and deploy your site.
+
+[build]
+  # This is the command to build your project.
+  command = "npm run build"
+  
+  # This is the directory that contains the built site.
+  publish = "dist"
+
+[build.environment]
+  # This forces Netlify to use Node.js version 20 for the build.
+  # This is the critical fix for the deployment error.
+  NODE_VERSION = "20"
+
+# This rule is essential for Single Page Applications (SPAs) like yours.
+# It ensures that direct navigation to routes like /admin works correctly after deployment.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

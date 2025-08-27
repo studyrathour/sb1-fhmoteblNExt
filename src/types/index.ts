@@ -7,6 +7,7 @@ export interface Batch {
   createdAt: Date;
   isActive: boolean;
   enrolledStudents: number;
+  layout?: string;
 }
 
 export interface Subject {

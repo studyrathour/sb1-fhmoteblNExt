@@ -15,7 +15,15 @@ const NEW_BATCH_TEMPLATE: Omit<Batch, 'id' | 'createdAt' | 'isActive' | 'enrolle
   description: '',
   thumbnail: 'https://images.pexels.com/photos/5427656/pexels-photo-5427656.jpeg?auto=compress&cs=tinysrgb&w=800',
   subjects: [],
+  layout: 'standard-grid',
 };
+
+const layoutOptions = [
+  { id: 'standard-grid', name: 'Standard Grid' },
+  { id: 'horizontal-list', name: 'Horizontal List' },
+  { id: 'overlay-grid', name: 'Overlay Grid' },
+  { id: 'alternating-list', name: 'Alternating List' },
+];
 
 const BatchEditor: React.FC<BatchEditorProps> = ({ batchToEdit, onClose }) => {
   const [batchData, setBatchData] = useState<Omit<Batch, 'id'>>(
@@ -167,6 +175,18 @@ const BatchEditor: React.FC<BatchEditorProps> = ({ batchToEdit, onClose }) => {
           <div>
             <label className="block text-sm font-medium text-text-secondary">Thumbnail URL</label>
             <input type="text" value={batchData.thumbnail} onChange={(e) => handleBatchChange('thumbnail', e.target.value)} className={inputStyles}/>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary">Layout Style</label>
+            <select
+              value={(batchData as Batch).layout || 'standard-grid'}
+              onChange={(e) => handleBatchChange('layout', e.target.value)}
+              className={inputStyles}
+            >
+              {layoutOptions.map(option => (
+                <option key={option.id} value={option.id}>{option.name}</option>
+              ))}
+            </select>
           </div>
         </div>
 

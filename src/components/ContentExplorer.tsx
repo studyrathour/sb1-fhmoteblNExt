@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ArrowLeft,
-  Folder,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Batch, Subject } from '../types';
 import SubjectView from './SubjectView';
-import Tile from './Tile';
+import ContentThumbnail from './ContentThumbnail';
 
 type PathItem =
   | { type: 'root'; title: string; data: Subject[] }
@@ -60,15 +57,15 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ batch, onBackToCourse
     switch (currentLevel.type) {
       case 'root':
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentLevel.data.map((subject) => (
-              <Tile
+              <div
                 key={subject.id}
-                title={subject.name}
-                icon={Folder}
-                iconColor="text-primary"
+                className="cursor-pointer group"
                 onClick={() => drillDown({ type: 'subject', title: subject.name, data: subject })}
-              />
+              >
+                <ContentThumbnail title={subject.name} teacherImageUrl={subject.thumbnail} />
+              </div>
             ))}
           </div>
         );

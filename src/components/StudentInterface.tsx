@@ -3,6 +3,10 @@ import { Book, AlertTriangle } from 'lucide-react';
 import { Batch } from '../types';
 import { firebaseService } from '../services/firebase';
 import ContentExplorer from './ContentExplorer';
+import StandardGrid from './batch-layouts/StandardGrid';
+import HorizontalList from './batch-layouts/HorizontalList';
+import OverlayGrid from './batch-layouts/OverlayGrid';
+import AlternatingList from './batch-layouts/AlternatingList';
 
 const StudentInterface: React.FC = () => {
   const [allBatches, setAllBatches] = useState<Batch[]>([]);
@@ -63,10 +67,20 @@ const StudentInterface: React.FC = () => {
     if (selectedBatch) {
       return <ContentExplorer batch={selectedBatch} onBackToCourses={() => setSelectedBatch(null)} />;
     }
+
+    const groupedBatches = allBatches.reduce((acc, batch) => {
+      const layout = batch.layout || 'standard-grid';
+      if (!acc[layout]) {
+        acc[layout] = [];
+      }
+      acc[layout].push(batch);
+      return acc;
+    }, {} as Record<string, Batch[]>);
+
+    const layoutOrder = ['standard-grid', 'horizontal-list', 'overlay-grid', 'alternating-list'];
     
     return (
       <div>
-        {/* Removed the "All Courses" heading */}
         {allBatches.length === 0 ? (
           <div className="text-center py-12 bg-surface rounded-lg shadow-lg border border-secondary">
             <Book className="w-16 h-16 text-text-tertiary mx-auto mb-4" />
@@ -74,20 +88,26 @@ const StudentInterface: React.FC = () => {
             <p className="text-text-tertiary mt-2">Content is being prepared. Please check back later.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {allBatches.map((batch) => (
-              <div 
-                key={batch.id} 
-                onClick={() => setSelectedBatch(batch)} 
-                className="bg-surface rounded-lg overflow-hidden hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 transition-all cursor-pointer group border border-secondary"
-              >
-                <img src={batch.thumbnail} alt={batch.name} className="w-full h-48 object-cover"/>
-                <div className="p-4">
-                  <h3 className="font-semibold text-text-primary mb-2 group-hover:text-primary transition-colors truncate">{batch.name}</h3>
-                  <p className="text-sm text-text-secondary mb-4 line-clamp-2">{batch.description}</p>
-                </div>
-              </div>
-            ))}
+          <div className="space-y-16">
+            {layoutOrder.map(layoutKey => {
+              const batchesForLayout = groupedBatches[layoutKey];
+              if (!batchesForLayout || batchesForLayout.length === 0) {
+                return null;
+              }
+
+              switch (layoutKey) {
+                case 'standard-grid':
+                  return <StandardGrid key={layoutKey} batches={batchesForLayout} onSelectBatch={setSelectedBatch} />;
+                case 'horizontal-list':
+                  return <HorizontalList key={layoutKey} batches={batchesForLayout} onSelectBatch={setSelectedBatch} />;
+                case 'overlay-grid':
+                  return <OverlayGrid key={layoutKey} batches={batchesForLayout} onSelectBatch={setSelectedBatch} />;
+                case 'alternating-list':
+                  return <AlternatingList key={layoutKey} batches={batchesForLayout} onSelectBatch={setSelectedBatch} />;
+                default:
+                  return <StandardGrid key={layoutKey} batches={batchesForLayout} onSelectBatch={setSelectedBatch} />;
+              }
+            })}
           </div>
         )}
       </div>

@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Video, FileText, ClipboardCheck, HelpCircle, Play, Book } from 'lucide-react';
-import { Subject, Content, Section } from '../types';
+import { Subject, Content } from '../types';
 import { getVideoPlayerURL } from '../utils/videoPlayer';
+import ContentThumbnail from './ContentThumbnail';
 
 type ContentType = 'video' | 'notes' | 'assignment' | 'quiz';
 
@@ -36,9 +37,8 @@ const SubjectView: React.FC<{ subject: Subject }> = ({ subject }) => {
     type => contentByType[type as ContentType].length > 0
   ) as ContentType[];
   
-  // Set initial active tab to the first available one
   useState(() => {
-    if (availableTabs.length > 0) {
+    if (availableTabs.length > 0 && !availableTabs.includes(activeTab)) {
       setActiveTab(availableTabs[0]);
     }
   });
@@ -71,20 +71,22 @@ const SubjectView: React.FC<{ subject: Subject }> = ({ subject }) => {
 
       <div className="flex-grow overflow-y-auto">
         {activeContent.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {activeContent.map(content => (
-              <div key={content.id} className="border border-secondary rounded-lg bg-background p-3 hover:shadow-lg hover:border-primary/50 hover:-translate-y-0.5 transition-all group">
-                {content.thumbnail && <img src={content.thumbnail} alt={content.title} className="w-full h-24 object-cover rounded mb-3"/>}
-                <h5 className="font-medium text-text-primary text-sm mb-3 line-clamp-2 h-10">{content.title}</h5>
-                <a 
-                  href={content.type === 'video' ? getVideoPlayerURL(content.url, false) : content.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-full bg-primary/10 text-primary py-2 px-3 rounded-md text-sm text-center hover:bg-primary hover:text-white transition-colors flex items-center justify-center gap-1.5 font-medium"
-                >
-                  {content.type === 'video' ? <><Play className="w-4 h-4" />Watch</> : <><Book className="w-4 h-4" />View</>}
-                </a>
-              </div>
+              <a 
+                key={content.id}
+                href={content.type === 'video' ? getVideoPlayerURL(content.url, false) : content.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group block relative"
+              >
+                <ContentThumbnail title={content.title} teacherImageUrl={content.thumbnail} />
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg duration-300">
+                  <div className="bg-primary text-white rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform">
+                    {content.type === 'video' ? <Play className="w-6 h-6 fill-white" /> : <Book className="w-6 h-6" />}
+                  </div>
+                </div>
+              </a>
             ))}
           </div>
         ) : (
