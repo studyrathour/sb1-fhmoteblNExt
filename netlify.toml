@@ -1,18 +1,19 @@
-# This file configures the Netlify build environment.
+# This configuration file tells Netlify how to build and deploy your site.
 
 [build]
-  # Specifies the command to build the project.
-  command = "npm run build"
-  
-  # Specifies the directory that contains the built project.
+  # The command to build your site.
+  command = "npm install && npm run build"
+  # The directory that contains the built site.
   publish = "dist"
 
 [build.environment]
-  # Sets the Node.js version for the build, resolving dependency issues.
+  # This is the crucial line that fixes the build error.
+  # It forces Netlify to use Node.js version 20.
   NODE_VERSION = "20"
 
-# This rule ensures that client-side routing works correctly for this Single Page App (SPA).
-# It redirects all requests to the main index.html file, allowing React Router to handle them.
+# This rule is essential for Single Page Applications (SPAs) like yours.
+# It ensures that all paths are handled by your index.html file,
+# fixing "404 Not Found" errors on direct navigation to routes like /admin.
 [[redirects]]
   from = "/*"
   to = "/index.html"
